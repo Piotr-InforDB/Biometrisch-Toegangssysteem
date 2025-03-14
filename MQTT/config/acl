@@ -1,0 +1,7 @@
+# Allow full access to the facial_recognition_service user
+user facial_recognition_service
+topic readwrite #
+
+# Default deny rule
+pattern write $SYS/#
+pattern read $SYS/#
