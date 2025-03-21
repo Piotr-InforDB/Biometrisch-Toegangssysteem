@@ -1,5 +1,7 @@
-# Allow full access to the facial_recognition_service user
 user facial_recognition_service
+topic readwrite #
+
+user lock
 topic readwrite #
 
 # Default deny rule
