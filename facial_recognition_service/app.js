@@ -2,7 +2,7 @@ const mqtt = require('mqtt');
 
 
 console.log('Trying to connect to MQTT broker')
-const client = mqtt.connect('mqtt://MQTT:1883', {
+const client = mqtt.connect('mqtt://accesscontrol.home:1883', {
     username: 'facial_recognition_service',
     password: 'admin123'
 });
