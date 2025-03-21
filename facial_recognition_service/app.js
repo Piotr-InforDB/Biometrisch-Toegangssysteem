@@ -19,10 +19,10 @@ client.on('connect', () => {
        }
        console.log('subscribed to test/topic');
 
-       setInterval(() => {
+       // setInterval(() => {
            client.publish('test/topic', 'message test');
            console.log('message published');
-       }, 2500);
+       // }, 2500);
     });
 
 });

@@ -1,2 +1,3 @@
 .idea
 facial_recognition_service/node_modules
+MQTT/data/mosquitto.db
