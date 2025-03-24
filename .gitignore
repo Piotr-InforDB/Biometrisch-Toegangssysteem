@@ -1,3 +1,9 @@
 .idea
+
 facial_recognition_service/node_modules
+facial_recognition_service/package-lock.json
+
+kiosk_service/node_modules
+kiosk_service/package-lock.json
+
 MQTT/data/mosquitto.db

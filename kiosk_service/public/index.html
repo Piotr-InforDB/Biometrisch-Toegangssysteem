@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Live Camera Feed</title>
+  <style>
+      body {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          background-color: #111;
+      }
+
+      img {
+          border: 5px solid #00ff00;
+          border-radius: 10px;
+          width: 640px;
+          height: 480px;
+      }
+  </style>
+</head>
+<body>
+<img id="camera-feed" src="" alt="Camera Feed">
+
+<script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+<script>
+    const socket = io();
+    const imgElement = document.getElementById('camera-feed');
+    let isProcessing = false;
+
+    function requestFrame() {
+        if (!isProcessing) {
+            isProcessing = true;
+            socket.emit('request_frame');
+        }
+    }
+
+    socket.on('frame', (data) => {
+        if(!data){
+            setTimeout(requestFrame, 2500);
+            return;
+        }
+
+        const img = new Image();
+
+        img.onload = () => {
+            imgElement.src = img.src;
+            isProcessing = false;
+            requestFrame();
+        };
+
+        img.onerror = () => {
+            console.error("Invalid image received, skipping...");
+            isProcessing = false;
+            requestFrame();
+        };
+
+
+        img.src = `data:image/jpeg;base64,${data}`;
+    });
+
+    requestFrame();
+</script>
+</body>
+</html>

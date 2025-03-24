@@ -1,6 +1,9 @@
 user facial_recognition_service
 topic readwrite #
 
+user kiosk_service
+topic readwrite #
+
 user lock
 topic readwrite #
 

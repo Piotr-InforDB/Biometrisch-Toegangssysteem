@@ -1,28 +1,31 @@
 const mqtt = require('mqtt');
 
+const [node, file, topic, message] = process.argv;
 
-console.log('Trying to connect to MQTT broker')
+console.log(topic, message);
+
+console.log('FRS Trying to connect to MQTT broker')
 const client = mqtt.connect('mqtt://accesscontrol.home:1883', {
-// const client = mqtt.connect('mqtt://MQTT:1883', {
+// const client = mqtt.connect('mqtt://localhost:1883', {
     username: 'facial_recognition_service',
     password: 'admin'
 });
 
 client.on('connect', () => {
-   console.log('connected to the broker')
+   console.log('FRS connected to the broker')
 
-    client.subscribe('test/topic', (err) => {
+    client.subscribe(topic, (err) => {
        if(err){
-           console.log('Error subsribing');
+           console.log('FRS Error subsribing');
            console.log(err);
            return;
        }
-       console.log('subscribed to test/topic');
+       console.log(`FRS subscribed to ${topic}`);
 
        // setInterval(() => {
-           client.publish('test/topic', 'message test');
-           console.log('message published');
-       // }, 2500);
+           client.publish(topic, message);
+           console.log('FRS message published');
+       // }, 2000);
     });
 
 });
