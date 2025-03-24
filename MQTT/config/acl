@@ -4,6 +4,9 @@ topic readwrite #
 user lock
 topic readwrite #
 
+user verification_node
+topic readwrite #
+
 # Default deny rule
 pattern write $SYS/#
 pattern read $SYS/#
