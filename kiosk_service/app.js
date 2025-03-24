@@ -36,7 +36,7 @@ client.on('message', (topic, message) => {
 
 //HTTP Server
 const app = express();
-const hostname = 'localhost';
+const hostname = '0.0.0.0';
 const port = 3000;
 const server = http.createServer((app));
 
