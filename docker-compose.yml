@@ -35,6 +35,8 @@ services:
     container_name: kiosk_service
     depends_on:
       - mqtt
+    ports:
+      - "3000:3000"
     restart: unless-stopped
     networks:
       - iot-network
