@@ -38,7 +38,8 @@
 
     socket.on('frame', (data) => {
         if(!data){
-            setTimeout(requestFrame, 2500);
+            isProcessing = false;
+            setTimeout(requestFrame, 5000);
             return;
         }
 
