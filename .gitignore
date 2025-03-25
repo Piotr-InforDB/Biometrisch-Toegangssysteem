@@ -2,8 +2,12 @@
 
 facial_recognition_service/node_modules
 facial_recognition_service/package-lock.json
+facial_recognition_service/last_frame.jpg
 
 kiosk_service/node_modules
 kiosk_service/package-lock.json
+
+debug/node_modules
+debug/package-lock.json
 
 MQTT/data/mosquitto.db

@@ -18,15 +18,15 @@ services:
       - iot-network
 
   # Facial Recognition service
-#  facial_recognition_service:
-#    build:
-#      context: ./facial_recognition_service
-#    container_name: facial_recognition_service
-#    depends_on:
-#      - mqtt
-#    restart: unless-stopped
-#    networks:
-#      - iot-network
+  facial_recognition_service:
+    build:
+      context: ./facial_recognition_service
+    container_name: facial_recognition_service
+    depends_on:
+      - mqtt
+    restart: unless-stopped
+    networks:
+      - iot-network
 
 
   # Facial Recognition service
