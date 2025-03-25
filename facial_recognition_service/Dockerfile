@@ -1,12 +1,13 @@
-FROM node:18
+FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+COPY requirements.txt .
+RUN apt-get update && \
+    apt-get install -y build-essential cmake libgl1 libglib2.0-0 && \
+    pip install --upgrade pip && \
+    pip install -r requirements.txt
 
 COPY . .
 
-EXPOSE 3000
-
-CMD ["node", "app.js"]
+CMD ["python", "facial_recognition.py"]

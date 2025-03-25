@@ -3,10 +3,12 @@ const mqtt = require('mqtt');
 const http = require('http');
 const socket = require('socket.io');
 
-console.log('KS Trying to connect to MQTT broker')
 //TODO Change ip
-const client = mqtt.connect('mqtt://accesscontrol.home:1883', {
-// const client = mqtt.connect('mqtt://localhost:1883', {
+const MQTT_BROKER = 'accesscontrol'
+const MQTT_PORT = '1883'
+
+console.log('KS Trying to connect to MQTT broker')
+const client = mqtt.connect(`mqtt://${MQTT_BROKER}:${MQTT_PORT}`, {
     username: 'kiosk_service',
     password: 'admin'
 });

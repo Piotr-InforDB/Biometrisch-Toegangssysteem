@@ -1,3 +1,6 @@
+user debug
+topic readwrite #
+
 user facial_recognition_service
 topic readwrite #
 
