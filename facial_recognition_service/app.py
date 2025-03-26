@@ -5,7 +5,7 @@ import io
 import time
 from PIL import Image
 
-MQTT_BROKER = 'accesscontrol'
+MQTT_BROKER = 'accesscontrol.home'
 MQTT_PORT = 1883
 MQTT_TOPIC = 'webcam/feed'
 MQTT_USERNAME = 'facial_recognition_service'

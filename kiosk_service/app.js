@@ -4,7 +4,7 @@ const http = require('http');
 const socket = require('socket.io');
 
 //TODO Change ip
-const MQTT_BROKER = 'accesscontrol'
+const MQTT_BROKER = 'accesscontrol.home'
 const MQTT_PORT = '1883'
 
 console.log('KS Trying to connect to MQTT broker')
