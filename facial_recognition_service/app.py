@@ -1,9 +1,15 @@
+from time import sleep
+
 import paho.mqtt.client as mqtt
 import face_recognition
 import os
+import time
 import threading
 import queue
 from pathlib import Path
+import io
+from PIL import Image
+from concurrent.futures import ThreadPoolExecutor
 
 MQTT_BROKER = 'accesscontrol'
 MQTT_PORT = 1883
@@ -11,39 +17,45 @@ MQTT_TOPIC = 'webcam/feed'
 MQTT_USERNAME = 'facial_recognition_service'
 MQTT_PASSWORD = 'admin'
 
-frame_queue = queue.Queue(maxsize=1)
+executor = ThreadPoolExecutor(max_workers=2)
+
+latest_frame = None
+frame_lock = threading.Lock()
 
 def on_connect(client, userdata, flags, rc, properties=None):
     print('Connected with result code ' + str(rc))
     client.subscribe(MQTT_TOPIC)
 
 def on_message(client, userdata, msg):
-    if frame_queue.full():
-        try:
-            frame_queue.get_nowait()
-        except queue.Empty:
-            pass
-    frame_queue.put(msg.payload)
+    global latest_frame
+    with frame_lock:
+        latest_frame = msg.payload
+
+def process_frame(jpeg_bytes):
+    try:
+        image = face_recognition.load_image_file(io.BytesIO(jpeg_bytes))
+        face_landmarks_list = face_recognition.face_landmarks(image)
+        print(face_landmarks_list)
+        if len(face_landmarks_list):
+            print('face', flush=True)
+        else:
+            print('no face', flush=True)
+    except Exception as e:
+        print(f"Error processing frame: {e}", flush=True)
 
 def recognition_worker():
+    print("Recognition worker started")
+    last_frame = None
     while True:
-        jpeg_bytes = frame_queue.get()
-
-        filename = Path("last_frame.jpg")
-        with open(filename, "wb") as f:
-            f.write(jpeg_bytes)
-
-        image = face_recognition.load_image_file(filename)
-        face_landmarks_list = face_recognition.face_landmarks(image)
-
-        if len(face_landmarks_list):
-            print('face')
-        else:
-            print('no face')
-
-        os.remove(filename)
+        time.sleep(1)
+        with frame_lock:
+            current_frame = latest_frame
+        if current_frame is not None and current_frame != last_frame:
+            last_frame = current_frame
+            executor.submit(process_frame, current_frame)
 
 recognition_thread = threading.Thread(target=recognition_worker, daemon=True)
+print("Starting recognition thread")
 recognition_thread.start()
 
 client = mqtt.Client(client_id="facial_recognition_service")

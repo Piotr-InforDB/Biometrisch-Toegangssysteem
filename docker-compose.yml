@@ -29,7 +29,7 @@ services:
       - iot-network
 
 
-  # Facial Recognition service
+  # Kiosk service
   kiosk_service:
     build:
       context: ./kiosk_service
