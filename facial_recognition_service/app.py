@@ -1,35 +1,29 @@
-from time import sleep
-
 import paho.mqtt.client as mqtt
 import face_recognition
-import os
-import time
 import threading
-import queue
-from pathlib import Path
 import io
+import time
 from PIL import Image
-from concurrent.futures import ThreadPoolExecutor
 
-MQTT_BROKER = 'accesscontrol'
+MQTT_BROKER = 'MQTT'
 MQTT_PORT = 1883
 MQTT_TOPIC = 'webcam/feed'
 MQTT_USERNAME = 'facial_recognition_service'
 MQTT_PASSWORD = 'admin'
 
-executor = ThreadPoolExecutor(max_workers=2)
-
 latest_frame = None
 frame_lock = threading.Lock()
+frame_ready = threading.Event()
 
 def on_connect(client, userdata, flags, rc, properties=None):
-    print('Connected with result code ' + str(rc))
+    print('Connected with result code ' + str(rc), flush=True)
     client.subscribe(MQTT_TOPIC)
 
 def on_message(client, userdata, msg):
     global latest_frame
     with frame_lock:
         latest_frame = msg.payload
+    frame_ready.set()
 
 def process_frame(jpeg_bytes):
     try:
@@ -44,19 +38,24 @@ def process_frame(jpeg_bytes):
         print(f"Error processing frame: {e}", flush=True)
 
 def recognition_worker():
-    print("Recognition worker started")
-    last_frame = None
+    global latest_frame
+    print("Recognition worker started", flush=True)
     while True:
-        time.sleep(1)
-        with frame_lock:
-            current_frame = latest_frame
-        if current_frame is not None and current_frame != last_frame:
-            last_frame = current_frame
-            executor.submit(process_frame, current_frame)
+        frame_ready.wait()
+        while True:
 
-recognition_thread = threading.Thread(target=recognition_worker, daemon=True)
-print("Starting recognition thread")
-recognition_thread.start()
+            time.sleep(.33)
+
+            with frame_lock:
+                frame_to_process = latest_frame
+                latest_frame = None
+                frame_ready.clear()
+            if frame_to_process:
+                process_frame(frame_to_process)
+            else:
+                break
+
+threading.Thread(target=recognition_worker, daemon=True).start()
 
 client = mqtt.Client(client_id="facial_recognition_service")
 client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
