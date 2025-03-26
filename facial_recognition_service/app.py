@@ -32,6 +32,7 @@ def process_frame(jpeg_bytes):
         print(face_landmarks_list)
         if len(face_landmarks_list):
             print('face', flush=True)
+            client.publish("servo/rotate", 180)
         else:
             print('no face', flush=True)
     except Exception as e:
