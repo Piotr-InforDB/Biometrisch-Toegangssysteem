@@ -10,6 +10,6 @@ WORKDIR /app
 
 COPY . /app
 
-RUN pip install spidev
+RUN pip install spidev RPI.GPIO
 
 CMD ["python3", "sender.py"]
