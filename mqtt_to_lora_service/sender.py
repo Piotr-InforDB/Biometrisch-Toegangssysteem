@@ -1,21 +1,12 @@
-from LoRa import LoRa
+from LoRaSender import  LoRaSender
 from config import BOARD
 from constants import *
+import paho.mqtt.client as mqtt
 
-import time
-
-
-class LoRaSender(LoRa):
-    def __init__(self, verbose=False):
-        super(LoRaSender, self).__init__(verbose)
-        self.set_mode(MODE.SLEEP)
-        self.set_dio_mapping([1, 0, 0, 0, 0, 0])  # DIO0 will trigger TxDone interrupt
-
-    def on_tx_done(self):
-        print("Message sent.")
-        self.clear_irq_flags(TxDone=1)
-        self.set_mode(MODE.STDBY)
-
+MQTT_USERNAME = 'mqtt_to_lora_service'
+MQTT_PASSWORD = 'admin'
+MQTT_BROKER = 'accesscontrol.home'
+MQTT_PORT = 1883
 
 # Setup
 BOARD.setup()
@@ -36,18 +27,31 @@ lora.set_pa_config(pa_select=1, max_power=7, output_power=14)
 
 print("LoRa Transmitter ready")
 
-try:
-    counter = 0
-    while True:
-        message = f"Hello from Pi #{counter}"
-        print(f"Sending: {message}")
+def on_connect(client, userdata, flags, rc, properties=None):
+    print(f"Connected with result code: {rc}")
+    client.subscribe("lora/send/+/+")
 
-        lora.write_payload([ord(c) for c in message])
-        lora.set_mode(MODE.TX)
+def on_message(client, userdata, msg):
+    topic_parts = msg.topic.split("/")
+    device_id = topic_parts[2]
+    command = topic_parts(3)
 
-        counter += 1
-        time.sleep(3)
+    data = msg.payload
+    send_through_lora(device_id, command, msg.payload())
 
-except KeyboardInterrupt:
-    print("Transmitter stopped")
-    BOARD.teardown()
+
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=MQTT_USERNAME)
+client.on_connect = on_connect
+client.on_message = on_message
+
+client.username_pw_set(username=MQTT_USERNAME, password=MQTT_PASSWORD)
+client.connect(MQTT_BROKER, 1883)
+
+
+def send_through_lora(device_id, command, payload):
+    print(f"Sending to {device_id}, command:{command}, message: {payload}")
+
+    message = f"{device_id}:{command}:{payload}"
+
+    lora.write_payload(message.encode("utf-8"))
+    lora.set_mode(MODE.TX)

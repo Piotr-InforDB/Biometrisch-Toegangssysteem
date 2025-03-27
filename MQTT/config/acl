@@ -7,6 +7,9 @@ topic readwrite #
 user kiosk_service
 topic readwrite #
 
+user mqtt_to_lora_service
+topic readwrite #
+
 user lock
 topic readwrite #
 

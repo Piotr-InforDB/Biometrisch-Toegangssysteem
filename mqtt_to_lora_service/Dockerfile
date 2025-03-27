@@ -10,6 +10,6 @@ WORKDIR /app
 
 COPY . /app
 
-RUN pip install spidev RPI.GPIO
+RUN pip install spidev RPI.GPIO paho-mqtt
 
 CMD ["python3", "sender.py"]
