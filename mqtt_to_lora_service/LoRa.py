@@ -1,6 +1,6 @@
 import sys
-from .constants import *
-from .board_config import BOARD
+from constants import *
+from config import BOARD
 
 
 ################################################## Some utility functions ##############################################
