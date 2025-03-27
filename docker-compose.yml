@@ -6,7 +6,7 @@ services:
   mqtt:
     build:
       context: ./MQTT
-    container_name: MQTT
+    container_name: mqtt
     ports:
       - "1883:1883"
     volumes:
@@ -42,6 +42,18 @@ services:
     networks:
       - iot-network
 
+  mqtt_to_lora_service:
+    build:
+      context: ./mqtt_to_lora_service
+    container_name: mqtt_to_lora_service
+    privileged: true
+    devices:
+      - "/dev/spidev0.0:/dev/spidev0.0"
+    depends_on:
+      - mqtt
+    restart: unless-stopped
+    networks:
+      - iot-network
 
 
 networks:
