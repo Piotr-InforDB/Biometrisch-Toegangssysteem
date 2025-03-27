@@ -32,7 +32,10 @@ def on_connect(client, userdata, flags, rc, properties=None):
     client.subscribe("lora/send/+/+")
 
 def on_message(client, userdata, msg):
-    topic_parts = msg.topic.split("/")
+    topic = msg.topic
+    print(f"Message received on {topic}")
+
+    topic_parts = topic.split("/")
     device_id = topic_parts[2]
     command = topic_parts(3)
 
@@ -40,7 +43,7 @@ def on_message(client, userdata, msg):
     send_through_lora(device_id, command, msg.payload())
 
 
-client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=MQTT_USERNAME)
+client = mqtt.Client(client_id=MQTT_USERNAME)
 client.on_connect = on_connect
 client.on_message = on_message
 
