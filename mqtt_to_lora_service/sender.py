@@ -62,10 +62,7 @@ def send_through_lora(device_id, command, payload):
 
     message = f"{device_id}:{command}:{payload}"
 
-    lora.write_payload(0x01)
-    lora.write_payload("1".encode("utf-8"))
-
-    lora.write_payload(message.encode("utf-8"))
+    lora.write_payload([ord(c) for c in message])
     lora.set_mode(MODE.TX)
 
 client.loop_forever()
