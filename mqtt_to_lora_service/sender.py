@@ -9,13 +9,18 @@ MQTT_BROKER = 'accesscontrol.home'
 MQTT_PORT = 1883
 
 # Setup
+print('Board setup')
 BOARD.setup()
+print('Board reset')
 BOARD.reset()
 
+print('lora sender')
 lora = LoRaSender(verbose=False)
+print('lora standby')
 lora.set_mode(MODE.STDBY)
 
 # LoRa parameters (must match ESP)
+print('lora sets')
 lora.set_freq(433.0)
 lora.set_spreading_factor(7)
 lora.set_bw(BW.BW125)
@@ -56,6 +61,9 @@ def send_through_lora(device_id, command, payload):
     print(f"Sending to {device_id}, command:{command}, message: {payload}")
 
     message = f"{device_id}:{command}:{payload}"
+
+    lora.write_payload(0x01)
+    lora.write_payload("1".encode("utf-8"))
 
     lora.write_payload(message.encode("utf-8"))
     lora.set_mode(MODE.TX)
