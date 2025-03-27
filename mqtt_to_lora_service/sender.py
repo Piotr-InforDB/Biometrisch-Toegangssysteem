@@ -32,7 +32,7 @@ def on_connect(client, userdata, flags, rc, properties=None):
     client.subscribe("lora/send/+/+")
 
 def on_message(client, userdata, msg):
-    print(f"Message received on {topic}")
+    print(f"Message received on {msg.topic}")
 
     topic = msg.topic
     data = msg.payload
