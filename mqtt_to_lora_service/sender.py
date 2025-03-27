@@ -1,5 +1,5 @@
 from LoRa import LoRa
-from board_config import BOARD
+from config import BOARD
 from constants import *
 
 import time
