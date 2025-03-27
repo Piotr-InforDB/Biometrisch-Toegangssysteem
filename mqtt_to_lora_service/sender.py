@@ -32,15 +32,16 @@ def on_connect(client, userdata, flags, rc, properties=None):
     client.subscribe("lora/send/+/+")
 
 def on_message(client, userdata, msg):
-    topic = msg.topic
     print(f"Message received on {topic}")
+
+    topic = msg.topic
+    data = msg.payload
 
     topic_parts = topic.split("/")
     device_id = topic_parts[2]
-    command = topic_parts(3)
+    command = topic_parts[3]
 
-    data = msg.payload
-    send_through_lora(device_id, command, msg.payload())
+    send_through_lora(device_id, command, data)
 
 
 client = mqtt.Client(client_id=MQTT_USERNAME)
