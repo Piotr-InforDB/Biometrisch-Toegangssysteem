@@ -46,7 +46,7 @@ def on_message(client, userdata, msg):
     device_id = topic_parts[2]
     command = topic_parts[3]
 
-    send_through_lora(device_id, command, data)
+    send_through_lora(device_id, command, data.decode())
 
 
 client = mqtt.Client(client_id=MQTT_USERNAME)
