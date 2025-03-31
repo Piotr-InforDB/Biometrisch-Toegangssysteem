@@ -58,11 +58,12 @@ client.connect(MQTT_BROKER, 1883)
 
 
 def send_through_lora(device_id, command, payload):
-    print(f"Sending to {device_id}, command:{command}, message: {payload}")
-
     message = f"{device_id}:{command}:{payload}"
+    print(f"Sending: {message}")
 
-    lora.write_payload([ord(c) for c in message])
+    bytes = list(message.encode())
+
+    lora.write_payload(bytes)
     lora.set_mode(MODE.TX)
 
 client.loop_forever()
