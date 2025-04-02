@@ -7,7 +7,7 @@ class LoRaSender(LoRa):
         self.set_mode(MODE.SLEEP)
         self.set_dio_mapping([0, 0, 0, 0, 0, 0])
         self.rx_callback = None
-        lora.set_mode(MODE.RXCONT)
+        self.set_mode(MODE.RXCONT)
 
     def on_tx_done(self):
         print("Message sent.")
