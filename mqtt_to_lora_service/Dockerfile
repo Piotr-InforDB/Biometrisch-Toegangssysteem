@@ -13,4 +13,4 @@ COPY . .
 
 RUN pip install spidev RPI.GPIO paho-mqtt
 
-CMD ["python", "-u", "sender.py"]
+CMD ["python", "-u", "app.py"]
