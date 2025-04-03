@@ -50,6 +50,7 @@ class LoRa(object):
     backup_registers = []
     verbose = True
     dio_mapping = [None] * 6          # store the dio mapping here
+    tx_time = None
 
     def __init__(self, verbose=True, do_calibration=True, calibration_freq=868):
         """ Init the object

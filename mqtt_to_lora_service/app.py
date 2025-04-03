@@ -2,6 +2,7 @@ from LoRaSender import  LoRaSender
 from config import BOARD
 from constants import *
 
+import time
 import threading
 import paho.mqtt.client as mqtt
 
@@ -9,6 +10,8 @@ MQTT_USERNAME = 'mqtt_to_lora_service'
 MQTT_PASSWORD = 'admin'
 MQTT_BROKER = 'accesscontrol.home'
 MQTT_PORT = 1883
+
+LORA_TX_TIME = 0.5
 
 print('Board setup')
 BOARD.setup()
@@ -59,9 +62,10 @@ client.connect(MQTT_BROKER, 1883)
 
 def send_through_lora(device_id, command, payload):
     message = f"{device_id}:{command}:{payload}"
-    print(f"Sending: {message}")
+    print(f"Sending to LoRa: {message}")
 
     bytes = list(message.encode())
+    lora.tx_time = time.time()
 
     lora.write_payload(bytes)
     lora.set_mode(MODE.TX)
@@ -69,15 +73,22 @@ def send_through_lora(device_id, command, payload):
 def on_lora_message(message):
     print(message)
     message_parts = message.split(":")
-
     device_id = message_parts[0]
     topic = message_parts[1]
     message = message_parts[2]
 
-    print(f"Sending on topic: {topic}")
-    print(f"Message: {message}")
+    print(f"Received LoRa message: {message}")
+    print(f"Sending to MQTT: {topic} : {message}")
 
     client.publish(topic, message)
 
+def show_mode():
+    while True:
+        if lora.mode == 131 and lora.tx_time and time.time() - lora.tx_time > LORA_TX_TIME:
+            print("Setting mode to RX")
+            lora.set_mode(MODE.RXCONT)
+        time.sleep(0.5)
+
+threading.Thread(target=show_mode, daemon=True).start()
 lora.set_rx_callback(on_lora_message)
 client.loop_forever()

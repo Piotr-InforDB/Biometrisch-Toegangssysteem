@@ -19,7 +19,6 @@ class LoRaSender(LoRa):
         payload = self.read_payload(nocheck=True)
         try:
             message = bytes(payload).decode()
-            print(f"Received LoRa: {message}")
             if self.rx_callback:
                 self.rx_callback(message)
         except Exception as e:
