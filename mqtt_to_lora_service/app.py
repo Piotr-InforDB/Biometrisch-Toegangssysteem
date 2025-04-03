@@ -49,7 +49,12 @@ def on_message(client, userdata, msg):
     device_id = topic_parts[2]
     command = topic_parts[3]
 
-    send_through_lora(device_id, command, data.decode())
+    try:
+        payload = data.decode("utf-8")
+        send_through_lora(device_id, command, payload)
+    except UnicodeDecodeError as e:
+        print(f"Failed to decode payload: {e}")
+        return
 
 
 client = mqtt.Client(client_id=MQTT_USERNAME)

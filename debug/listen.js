@@ -1,4 +1,5 @@
 const mqtt = require('mqtt');
+const fs = require('node:fs');
 
 const [node, file, topic] = process.argv;
 const MQTT_BROKER = 'accesscontrol.home';
@@ -28,4 +29,11 @@ client.on('connect', () => {
 
 client.on('message', (topic, message) => {
     console.log(`message on ${topic}: ${message}`)
+    const date = new Date();
+
+    const hours = `0${date.getHours()}`.slice(-2);
+    const minutes = `0${date.getMinutes()}`.slice(-2);
+    const seconds = `0${date.getSeconds()}`.slice(-2);
+
+    fs.appendFileSync('log.txt', `[time: ${hours}:${minutes}:${seconds}][timestamp: ${date.getTime()}][topic: ${topic}][message: ${message}]\n`)
 });
