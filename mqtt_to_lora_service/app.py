@@ -25,7 +25,7 @@ lora.set_mode(MODE.STDBY)
 
 print('lora sets')
 lora.set_freq(433.0)
-lora.set_spreading_factor(7)
+lora.set_spreading_factor(10)
 lora.set_bw(BW.BW125)
 lora.set_coding_rate(CODING_RATE.CR4_5)
 lora.set_preamble(8)
