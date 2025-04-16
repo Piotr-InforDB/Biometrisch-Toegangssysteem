@@ -8,6 +8,8 @@
   },
   "private": true,
   "dependencies": {
-    "mqtt": "^5.10.4"
+    "@serialport/parser-readline": "^13.0.0",
+    "mqtt": "^5.10.4",
+    "serialport": "^13.0.0"
   }
 }
