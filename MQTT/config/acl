@@ -10,6 +10,12 @@ topic readwrite #
 user mqtt_to_lora_service
 topic readwrite #
 
+user mqtt_service
+topic readwrite #
+
+user interface
+topic readwrite #
+
 user lock
 topic readwrite #
 
