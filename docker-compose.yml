@@ -10,10 +10,12 @@ services:
     ports:
       - "1883:1883"
       - "9001:9001"
+      - "9002:9002"
     volumes:
       - ./MQTT/config:/mosquitto/config
       - ./MQTT/data:/mosquitto/data
       - ./MQTT/log:/mosquitto/log
+      - ./MQTT/certs:/mosquitto/certs
     restart: unless-stopped
     networks:
       - iot-network
