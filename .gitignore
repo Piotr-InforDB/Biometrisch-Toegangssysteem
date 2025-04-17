@@ -7,6 +7,9 @@ facial_recognition_service/last_frame.jpg
 kiosk_service/node_modules
 kiosk_service/package-lock.json
 
+mqtt_service/node_modules
+mqtt_service/package-lock.json
+
 debug/node_modules
 debug/package-lock.json
 
