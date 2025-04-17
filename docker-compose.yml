@@ -45,6 +45,17 @@ services:
     networks:
       - iot-network
 
+  # Kiosk service
+  mqtt_service:
+    build:
+      context: ./mqtt_service
+    container_name: mqtt_service
+    depends_on:
+      - mqtt
+    restart: unless-stopped
+    networks:
+      - iot-network
+
   mqtt_to_lora_service:
     build:
       context: ./mqtt_to_lora_service

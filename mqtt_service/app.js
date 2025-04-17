@@ -1,5 +1,5 @@
 const mqtt = require('mqtt');
-const {machineIdSync} = require('node-machine-id');
+const { machineIdSync } = require('node-machine-id');
 
 const identity = {
     type: 'HUB',
