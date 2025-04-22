@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
 
-  # MQTT Broker
+# MQTT Broker
   mqtt:
     build:
       context: ./MQTT
@@ -20,42 +20,43 @@ services:
     networks:
       - iot-network
 
-  # Facial Recognition service
-#  facial_recognition_service:
-#    build:
-#      context: ./facial_recognition_service
-#    container_name: facial_recognition_service
-#    depends_on:
-#      - mqtt
-#    restart: unless-stopped
-#    networks:
-#      - iot-network
+# Facial Recognition service
+  facial_recognition_service:
+    build:
+      context: ./facial_recognition_service
+    container_name: facial_recognition_service
+    depends_on:
+      - mqtt
+    restart: unless-stopped
+    networks:
+      - iot-network
 
 
-#  # Kiosk service
-#  kiosk_service:
-#    build:
-#      context: ./kiosk_service
-#    container_name: kiosk_service
-#    depends_on:
-#      - mqtt
-#    ports:
-#      - "3000:3000"
-#    restart: unless-stopped
-#    networks:
-#      - iot-network
-#
-  # MQTT service
-#  mqtt_service:
-#    build:
-#      context: ./mqtt_service
-#    container_name: mqtt_service
-#    depends_on:
-#      - mqtt
-#    restart: unless-stopped
-#    networks:
-#      - iot-network
-#
+# Kiosk service
+  kiosk_service:
+    build:
+      context: ./kiosk_service
+    container_name: kiosk_service
+    depends_on:
+      - mqtt
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - iot-network
+
+# MQTT service
+  mqtt_service:
+    build:
+      context: ./mqtt_service
+    container_name: mqtt_service
+    depends_on:
+      - mqtt
+    restart: unless-stopped
+    networks:
+      - iot-network
+
+# MQTT to LoRa service
 #  mqtt_to_lora_service:
 #    build:
 #      context: ./mqtt_to_lora_service
