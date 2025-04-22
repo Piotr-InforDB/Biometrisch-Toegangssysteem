@@ -21,54 +21,54 @@ services:
       - iot-network
 
   # Facial Recognition service
-  facial_recognition_service:
-    build:
-      context: ./facial_recognition_service
-    container_name: facial_recognition_service
-    depends_on:
-      - mqtt
-    restart: unless-stopped
-    networks:
-      - iot-network
+#  facial_recognition_service:
+#    build:
+#      context: ./facial_recognition_service
+#    container_name: facial_recognition_service
+#    depends_on:
+#      - mqtt
+#    restart: unless-stopped
+#    networks:
+#      - iot-network
 
 
-  # Kiosk service
-  kiosk_service:
-    build:
-      context: ./kiosk_service
-    container_name: kiosk_service
-    depends_on:
-      - mqtt
-    ports:
-      - "3000:3000"
-    restart: unless-stopped
-    networks:
-      - iot-network
-
-  # Kiosk service
-  mqtt_service:
-    build:
-      context: ./mqtt_service
-    container_name: mqtt_service
-    depends_on:
-      - mqtt
-    restart: unless-stopped
-    networks:
-      - iot-network
-
-  mqtt_to_lora_service:
-    build:
-      context: ./mqtt_to_lora_service
-    container_name: mqtt_to_lora_service
-    privileged: true
-    devices:
-      - "/dev/spidev0.0:/dev/spidev0.0"
-      - "/dev/gpiomem:/dev/gpiomem"
-    depends_on:
-      - mqtt
-    restart: unless-stopped
-    networks:
-      - iot-network
+#  # Kiosk service
+#  kiosk_service:
+#    build:
+#      context: ./kiosk_service
+#    container_name: kiosk_service
+#    depends_on:
+#      - mqtt
+#    ports:
+#      - "3000:3000"
+#    restart: unless-stopped
+#    networks:
+#      - iot-network
+#
+  # MQTT service
+#  mqtt_service:
+#    build:
+#      context: ./mqtt_service
+#    container_name: mqtt_service
+#    depends_on:
+#      - mqtt
+#    restart: unless-stopped
+#    networks:
+#      - iot-network
+#
+#  mqtt_to_lora_service:
+#    build:
+#      context: ./mqtt_to_lora_service
+#    container_name: mqtt_to_lora_service
+#    privileged: true
+#    devices:
+#      - "/dev/spidev0.0:/dev/spidev0.0"
+#      - "/dev/gpiomem:/dev/gpiomem"
+#    depends_on:
+#      - mqtt
+#    restart: unless-stopped
+#    networks:
+#      - iot-network
 
 
 networks:

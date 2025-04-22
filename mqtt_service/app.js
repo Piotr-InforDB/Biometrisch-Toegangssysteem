@@ -6,8 +6,12 @@ const identity = {
     name: 'Central HUB',
     id: machineIdSync(),
 }
+// const broker = 'localhost';
 const broker = 'accesscontrol.home';
-const topics = [ 'presence' ];
+const topics = [
+    'presence',
+    'client/identity'
+];
 
 
 console.log('Trying to connect to MQTT broker')
@@ -31,14 +35,21 @@ client.on('connect', () => {
     });
 });
 client.on('message', async (topic, message) => {
+    console.log(`Received ${topic}: ${message.toString()}`);
     switch (topic){
         case 'presence': await presence(message); break;
+        case 'client/identity': await clientIdentity(message); break;
     }
 });
 
 // Callbacks
 async function presence(){
     client.publish('presence/confirm', JSON.stringify(identity));
+    console.log(identity);
+}
+async function clientIdentity(message){
+    if(message.toString() !== identity.id){ return }
+    client.publish('client/identity/confirm', JSON.stringify(identity));
     console.log(identity);
 }
 
