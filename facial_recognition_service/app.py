@@ -2,8 +2,8 @@ import paho.mqtt.client as mqtt
 from messageHandler import MessageHandler
 
 #TODO Uncomment
-# MQTT_BROKER = 'accesscontrol.home'
-MQTT_BROKER = 'localhost'
+MQTT_BROKER = 'accesscontrol.home'
+# MQTT_BROKER = 'localhost'
 MQTT_PORT = 1883
 MQTT_USERNAME = 'facial_recognition_service'
 MQTT_PASSWORD = 'admin'
