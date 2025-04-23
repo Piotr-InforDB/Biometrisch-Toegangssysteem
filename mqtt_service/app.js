@@ -49,7 +49,7 @@ async function presence(){
 }
 async function clientIdentity(message){
     if(message.toString() !== identity.id){ return }
-    client.publish('client/identity/confirm', JSON.stringify(identity));
+    client.publish(`client/identity/${identity.id}`, JSON.stringify(identity));
     console.log(identity);
 }
 
