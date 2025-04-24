@@ -5,6 +5,7 @@ import time
 import os
 import json
 import base64
+import numpy as np
 from PIL import Image
 
 
@@ -24,6 +25,8 @@ class MessageHandler:
         threading.Thread(target=self.recognition_worker, daemon=True).start()
 
     def init_storage(self):
+        os.makedirs('users_images', exist_ok=True)
+
         if not os.path.exists("users.json"):
             with open("users.json", "w") as f:
                 json.dump([], f)
@@ -45,13 +48,35 @@ class MessageHandler:
     def process_frame(self, jpeg_bytes):
         try:
             image = face_recognition.load_image_file(io.BytesIO(jpeg_bytes))
-            face_landmarks_list = face_recognition.face_landmarks(image)
-            print(face_landmarks_list)
-            if len(face_landmarks_list):
-                print('face', flush=True)
-                self.client.publish("lora/send/D1/open_servo", 180)
-            else:
-                print('no face', flush=True)
+            face_encodings = face_recognition.face_encodings(image)
+
+            face = False
+            recognized = False
+            recognized_user = None
+
+            if face_encodings:
+                face = True
+                with open('users.json', 'r') as f:
+                    users = json.load(f)
+
+                for user in users:
+                    user_encodings = user['encodings']
+                    matches = face_recognition.compare_faces(user_encodings, face_encodings[0], tolerance=0.75)
+                    print(matches)
+
+
+                    if True in matches:
+                        recognized = True
+                        recognized_user = self.create_user_instance(user)
+                        print(f'Recognized user: {recognized_user}', flush=True)
+                        self.client.publish("lock/open", '180')
+
+            self.client.publish('facial_recognition/status', json.dumps({
+                "face": face,
+                "recognized": recognized,
+                "user": recognized_user,
+            }))
+
         except Exception as e:
             print(f"Error processing frame: {e}", flush=True)
     def recognition_worker(self):
@@ -72,6 +97,7 @@ class MessageHandler:
 
     # Users
     def handle_user_registration(self, payload):
+        print("User registration started", flush=True)
         try:
             data = json.loads(payload.decode())
 
@@ -79,19 +105,34 @@ class MessageHandler:
                 users = json.load(f)
 
             face_encodings = []
-            for base64_image in data['images']:
-                if ',' in base64_image:
-                    base64_image = base64_image.split(',')[1]
+            for index, base64_image in enumerate(data['images']):
+                try:
+                    if ',' in base64_image:
+                        base64_image = base64_image.split(',')[1]
 
-                image_bytes = base64.b64decode(base64_image)
-                image = face_recognition.load_image_file(io.BytesIO(image_bytes))
-                encodings = face_recognition.face_encodings(image)
-                print(encodings)
-                if not encodings:
+                    image_filename = f"users_images/{data['id']}_{index}.jpg"
+                    compressed_image_bytes = self.compress_image(base64_image, max_size_kb=75)
+                    with open(image_filename, "wb") as f:
+                        f.write(compressed_image_bytes)
+
+                    with Image.open(image_filename) as img:
+                        img.verify()
+
+                    with Image.open(image_filename) as img:
+                        img = img.convert('RGB')
+                        np_image = np.array(img)
+
+                    encodings = face_recognition.face_encodings(np_image)
+                    print(f"Encodings for {image_filename}: {encodings}")
+
+                    if not encodings:
+                        print(f"No face found in {image_filename}, skipping.")
+                        continue
+
+                    face_encodings.append(encodings[0].tolist())
+                except Exception as e:
+                    print(f"Failed processing {image_filename}: {e}")
                     continue
-
-                print(encodings)
-                face_encodings.append(encodings[0].tolist())
 
             users.append({
                 "id": data['id'],
@@ -102,6 +143,10 @@ class MessageHandler:
 
             with open('users.json', 'w') as f:
                 json.dump(users, f, indent=2)
+
+            print(f"hub/user/register/{data['id']}/confirm", {
+                "success": True,
+            })
 
             self.client.publish(f"hub/user/register/{data['id']}/confirm", json.dumps({
                 "success": True,
@@ -115,10 +160,32 @@ class MessageHandler:
 
         response = []
         for user in users:
-            response.append({
-                "id": user['id'],
-                "name": user['name'],
-                "preview": user["images"][0]
-            })
+            response.append(self.create_user_instance(user))
 
         self.client.publish("hub/users/get/response", json.dumps(response))
+    def create_user_instance(self, user):
+        return {
+            "id": user['id'],
+            "name": user['name'],
+            "preview": user["images"][0]
+        }
+
+    # Utility
+    def compress_image(self, base64_image: str, max_size_kb: int = 100) -> bytes:
+        image_bytes = base64.b64decode(base64_image)
+        img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+
+        quality = 85
+        output = io.BytesIO()
+
+        while True:
+            output.seek(0)
+            output.truncate(0)
+            img.save(output, format='JPEG', quality=quality)
+            size_kb = output.tell() / 1024
+
+            if size_kb <= max_size_kb or quality <= 30:
+                break
+            quality -= 5
+
+        return output.getvalue()
