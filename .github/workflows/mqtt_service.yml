@@ -2,11 +2,9 @@ name: Test MQTT Service
 
 on:
   push:
-    paths:
-      - 'mqtt_service/**'
+    branches: [ main ]
   pull_request:
-    paths:
-      - 'mqtt_service/**'
+    branches: [ main ]
 
 jobs:
   test:
