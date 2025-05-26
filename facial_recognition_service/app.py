@@ -12,6 +12,7 @@ MQTT_TOPICS = [
     'hub/user/register',
     'hub/users/get',
 ]
+#TODO rename hub/ naar recognition/
 
 messageHandler = MessageHandler()
 
