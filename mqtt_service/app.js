@@ -1,18 +1,5 @@
 const mqtt = require('mqtt');
-const { machineIdSync } = require('node-machine-id');
-
-const identity = {
-    type: 'HUB',
-    name: 'Central HUB',
-    id: machineIdSync(),
-}
-// const broker = 'localhost';
-const broker = 'accesscontrol.home';
-const topics = [
-    'presence',
-    'client/identity'
-];
-
+const { broker, identity, topics } = require('./vaiables')
 
 console.log('Trying to connect to MQTT broker')
 const client = mqtt.connect(`mqtt://${broker}:1883`, {
